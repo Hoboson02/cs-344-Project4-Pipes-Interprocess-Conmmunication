@@ -2,17 +2,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int main() {
-
-// 0. Parse the command line
-// 1. Make a pipe() in the parent
-// 2. fork().
-// 3. The child will run wc:
-//     - dup2() the read end of the pipe into stdin
-//     - close() the write end of the pipe
-//     - execlp() the wc command
-// 4. The parent will run ls:
-//     - dup2() the write end of the pipe into stdout
-//     - close() the read end of the pipe
-//     - execlp() the ls command 
+int main(int argc, char *argv[]) {
+	int fds[2];
+	pipe(fds);
+	if (fork() == 0) {
+		dup2(fds[0], 0);
+		close(fds[1]);
+		execlp("wc", "wc", "-l",NULL);
+		exit(1);
+	}
+	dup2(fds[1], 1);
+	close(fds[0]);
+	execlp("ls", "ls", "-1", "-a", argv[1] ,NULL);
 }
