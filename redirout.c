@@ -26,10 +26,9 @@ int main(int argc, char **argv){
 	char buf[2048];
 	int count;
 
-	while (count > 0) { // read() will return zero bytes read on end-of-file (EOF).
-		count = read(fds[0], buf, sizeof buf); // Repeatedly read() from the input end into a buffer.
+	while ((count = read(fds[0], buf, sizeof buf)) > 0) { // read() will return zero bytes read on end-of-file (EOF). Repeatedly read() from the input end into a buffer.
 		write(fd, buf, count); // write() the buffer into the output file you opened earlier.
-    }
+  }
   	close(fds[0]); // close() the input end of the pipe.
 	close(fd); // close() the output file.
 }
